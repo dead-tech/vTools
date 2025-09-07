@@ -11,54 +11,26 @@ function hexToRgb(hex){
     throw new Error('Bad Hex');
 }
 
-function getColorFromPickerSlider(propertyName) {
-    const picker = document.querySelector(`${propertyName}Picker`);
-    const slider = document.querySelector(`${propertyName}Slider`);
-    return { ...hexToRgb(picker.value), a: slider.value };
-}
-
-function groundLabelFill(propertyName) {
-    document.querySelectorAll(propertyName).forEach((display) => {
-        const picker = document.querySelector(`${propertyName}Picker`);
-        const slider = document.querySelector(`${propertyName}Slider`);
-        assignBackgroundColor(display, picker, slider);
-    })
-}
-
 function assignBackgroundColor(display, picker, slider) {
-    const selectedColor = picker.value;
-    display.style.backgroundColor = selectedColor;
+    const updater = () => {
+        display.style.backgroundColor = picker.value;
+        if (slider) {
+            display.style.opacity = slider.value / 255;
+        }
+    };
 
-    picker.addEventListener('input', () => {
-        const selectedColor = picker.value;
-        display.style.backgroundColor = selectedColor;
-    });
+    updater();
 
-    if (slider !== null) {
-        const selectedOpacity = slider.value;
-        display.style.opacity = selectedOpacity / 255;
-
-        slider.addEventListener('input', () => {
-            const selectedOpacity = slider.value;
-            display.style.opacity = selectedOpacity / 255;
-        });
+    picker.addEventListener('input', updater);
+    if (slider) {
+        slider.addEventListener('input', updater);
     }
 }
 
-function dumpGroundLabelFill(propertyName) {
-    let text = "";
-    const color = getColorFromPickerSlider(propertyName);
-    text += `Color_SelectedLabelFill_Gnd=${color.r},${color.g},${color.b}\n`;
-    text += `GroundLabel_Transparency_Bg=${color.a}\n`;
-    return text;
-}
-
-function groundLabelBorder(propertyName) {
-    document.querySelectorAll('#groundLabelFill').forEach((display) => {
-        const picker = document.querySelector(`${propertyName}Picker`);
-        const slider = document.querySelector(`${propertyName}Slider`);
-        assignBorderColor(display, picker, slider);
-    });
+function assignTextColor(display, picker) {
+    const updater = () => display.style.color = picker.value;
+    updater();
+    picker.addEventListener('input', updater);
 }
 
 function assignBorderColor(display, picker, slider) {
@@ -74,75 +46,83 @@ function assignBorderColor(display, picker, slider) {
     slider.addEventListener('input', updateBorder);
 }
 
-function dumpGroundLabelBorder(propertyName) {
-    let text = "";
-    const color = getColorFromPickerSlider(propertyName);
-    text += `Color_SelectedLabelBorder_Gnd=${color.r},${color.g},${color.b}\n`;
-    text += `GroundLabel_Transparency_Bd=${color.a}\n`;
-    return text;
+const PropertyType = Object.freeze({
+    GroundLabelBackgroundColor: { colorKey: "Color_SelectedLabelFill_Gnd", opacityKey: "GroundLabel_Transparency_Bg" },
+    GroundLabelBorderColor: { colorKey: "Color_SelectedLabelBorder_Gnd", opacityKey: "GroundLabel_Transparency_Bd"},
+    DepartureColor:  "Color_Departure",
+    ArrivalColor:  "Color_Arrival",
+    RawVideoColor:  "Color_RawVideo",
+});
+
+function spreadColorToString(color) {
+    return `${color.r}, ${color.g}, ${color.b}`;
 }
 
-function departureTextColor(propertyName) {
-    const display = document.querySelector('#departureLabel');
-    const picker = document.querySelector(propertyName);
-    assignTextColor(display, picker);
+function serializeColor(key, picker) {
+    return `${key}=${spreadColorToString(picker.value)}\n`;
 }
 
-function assignTextColor(display, picker) {
-    display.style.color = picker.value;
-    picker.addEventListener('input', () => display.style.color = picker.value);
-}
-
-function arrivalTextColor(propertyName) {
-    const display = document.querySelector('#arrivalLabel');
-    const picker = document.querySelector(propertyName);
-    assignTextColor(display, picker);
-}
-
-function dumpDepartureTextColor(propertyName) {
-    const picker = document.querySelector(propertyName);
-    const color = hexToRgb(picker.value);
-    return `Color_Departure=${color.r},${color.g},${color.b}\n`;
-}
-
-function dumpArrivalTextColor(propertyName) {
-    const picker = document.querySelector(propertyName);
-    const color = hexToRgb(picker.value);
-    return `Color_Arrival=${color.r},${color.g},${color.b}\n`;
-}
-
-function rawVideoColor(propertyName) {
-    const display = document.querySelector('#raw-video');
-    const picker = document.querySelector(propertyName);
-    assignBackgroundColor(display, picker, null)
-}
-
-function dumpRawVideoColor(propertyName) {
-    const picker = document.querySelector(propertyName);
-    const color = hexToRgb(picker.value);
-    return `Color_RawVideo=${color.r},${color.g},${color.b}\n`;
+function serializeColorWithOpacity(key, picker, slider) {
+    const { colorKey, opacityKey } = key;
+    return serializeColor(colorKey, picker) + `${opacityKey}=${slider.value}\n`;
 }
 
 const PROPERTIES = [
-    { name: '#groundLabelFill', loader: groundLabelFill, dumper: dumpGroundLabelFill },
-    { name: '#groundLabelBorder', loader: groundLabelBorder, dumper: dumpGroundLabelBorder },
-    { name: '#departureTextColor', loader: departureTextColor, dumper: dumpDepartureTextColor },
-    { name: '#arrivalTextColor', loader: arrivalTextColor, dumper: dumpArrivalTextColor },
-    { name: '#rawVideoColor', loader: rawVideoColor, dumper: dumpRawVideoColor },
+    {
+        type: PropertyType.GroundLabelBackgroundColor,
+        display: document.querySelectorAll('#groundLabelFill'),
+        picker: document.querySelector('#groundLabelFillPicker'),
+        slider: document.querySelector('#groundLabelFillSlider'),
+        onCreate: (displays, picker, slider) => displays.forEach((display) => assignBackgroundColor(display, picker, slider)),
+        onSerialize: (type, picker, slider) => serializeColorWithOpacity(type, picker, slider),
+    },
+    {
+        type: PropertyType.GroundLabelBorderColor,
+        display: document.querySelectorAll('#groundLabelFill'),
+        picker: document.querySelector('#groundLabelBorderPicker'),
+        slider: document.querySelector('#groundLabelBorderSlider'),
+        onCreate: (displays, picker, slider) => displays.forEach((display) => assignBorderColor(display, picker, slider)),
+        onSerialize: (type, picker, slider) => serializeColorWithOpacity(type, picker, slider),
+    },
+    {
+        type: PropertyType.DepartureColor,
+        display: document.querySelector('#departureLabel'),
+        picker: document.querySelector('#departureTextColor'),
+        onCreate: (display, picker) => assignTextColor(display, picker),
+        onSerialize: (type, picker) => serializeColor(type, picker),
+    },
+    {
+        type: PropertyType.ArrivalColor,
+        display: document.querySelector('#arrivalLabel'),
+        picker: document.querySelector('#arrivalTextColor'),
+        onCreate: (display, picker) => assignTextColor(display, picker),
+        onSerialize: (type, picker) => serializeColor(type, picker),
+    },
+    {
+        type: PropertyType.RawVideoColor,
+        display: document.querySelector('#rawVideo'),
+        picker: document.querySelector('#rawVideoColor'),
+        onCreate: (display, picker) => assignBackgroundColor(display, picker),
+        onSerialize: (type, picker) => serializeColor(type, picker),
+    },
 ];
+
+function getEnumKeyFromValue(enumObject, value) {
+    return Object.keys(enumObject).find(key => enumObject[key] === value);
+}
 
 function exportConfig() {
     let text = "";
-    for (const { name, _, dumper } of PROPERTIES) {
-        text += dumper(name);
+    for (const property of PROPERTIES) {
+        text += property.onSerialize(property.type, property.picker, property.slider);
     }
 
     return text;
 }
 
 function main() {
-    for (const { name, loader } of PROPERTIES) {
-        loader(name);
+    for (const property of PROPERTIES) {
+        property.onCreate(property.display, property.picker, property.slider);
     }
 
     const textArea = document.querySelector('#outputConfig');
