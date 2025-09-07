@@ -101,12 +101,20 @@ const PROPERTIES = [
     },
     {
         type: PropertyType.RawVideoColor,
-        display: document.querySelector('#rawVideo'),
         picker: document.querySelector('#rawVideoColor'),
-        onCreate: (display, picker) => assignBackgroundColor(display, picker),
         onSerialize: (type, picker) => serializeColor(type, picker),
     },
 ];
+
+const SettingsType = Object.freeze({
+    rawVideo: "RawVideo",
+    proMode: "Equip_ProMode",
+});
+
+let settings = {
+    rawVideo: false,
+    proMode: false,
+};
 
 function getEnumKeyFromValue(enumObject, value) {
     return Object.keys(enumObject).find(key => enumObject[key] === value);
@@ -114,30 +122,42 @@ function getEnumKeyFromValue(enumObject, value) {
 
 function exportConfig() {
     let text = "";
+
     for (const property of PROPERTIES) {
         text += property.onSerialize(property.type, property.picker, property.slider);
     }
+
+    Object.keys(SettingsType).forEach((key) => {
+        text += `${SettingsType[key]}=${settings[key] ? 1 : 0}\n`;
+    })
 
     return text;
 }
 
 function main() {
     for (const property of PROPERTIES) {
-        property.onCreate(property.display, property.picker, property.slider);
+        if (property.onCreate) {
+            property.onCreate(property.display, property.picker, property.slider);
+        }
     }
-
-    const textArea = document.querySelector('#outputConfig');
 
     const saveButton = document.querySelector('#saveButton');
     saveButton.addEventListener('click', () => {
-        textArea.value = exportConfig();
-    });
+        // TODO: Abstract this in a way similar to properties
+        const rawVideoCheckbox = document.querySelector('#enableRawVideo');
+        settings.rawVideo = rawVideoCheckbox.checked;
+        const proModeCheckbox = document.querySelector('#enableProMode');
+        settings.proMode = proModeCheckbox.checked;
 
-    const copyButton = document.querySelector('#copyButton');
-    copyButton.addEventListener('click', () => {
-        navigator.clipboard.writeText(textArea.value);
+        const content = exportConfig();
+        const blob = new Blob([content], { type: 'text/plain'});
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'GRPluginSettingsLocal.txt';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     });
-
 }
 
 
