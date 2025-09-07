@@ -33,6 +33,12 @@ function assignTextColor(display, picker) {
     picker.addEventListener('input', updater);
 }
 
+function assignSvgFillColor(display, picker) {
+    const updater = () => display.style.fill = picker.value;
+    updater();
+    picker.addEventListener('input', updater);
+}
+
 function assignBorderColor(display, picker, slider) {
     const updateBorder = () => {
         const borderColorRgb = hexToRgb(picker.value);
@@ -105,7 +111,9 @@ const PROPERTIES = [
     },
     {
         type: PropertyType.RawVideoColor,
+        display: document.querySelector('#rawVideo'),
         picker: document.querySelector('#rawVideoColor'),
+        onCreate: (display, picker) => assignSvgFillColor(display, picker),
         onSerialize: (type, picker) => serializeColor(type, picker),
     },
     {
