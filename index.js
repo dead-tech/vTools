@@ -54,7 +54,8 @@ const PropertyType = Object.freeze({
     RawVideoColor:  "Color_RawVideo",
 });
 
-function spreadColorToString(color) {
+function spreadColorToString(hexColor) {
+    const color = hexToRgb(hexColor);
     return `${color.r}, ${color.g}, ${color.b}`;
 }
 
