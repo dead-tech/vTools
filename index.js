@@ -15,7 +15,7 @@ function assignBackgroundColor(display, picker, slider) {
     const updater = () => {
         display.style.backgroundColor = picker.value;
         if (slider) {
-            display.style.opacity = slider.value / 255;
+            display.style.backgroundColor = `rgba(${spreadColorToString(picker.value)}, ${slider.value / 255})`
         }
     };
 
