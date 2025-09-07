@@ -109,11 +109,13 @@ const PROPERTIES = [
 const SettingsType = Object.freeze({
     rawVideo: "RawVideo",
     proMode: "Equip_ProMode",
+    trackHeadingLine: "Track_Heading_Line",
 });
 
 let settings = {
     rawVideo: false,
     proMode: false,
+    trackHeadingLine: false,
 };
 
 function getEnumKeyFromValue(enumObject, value) {
@@ -134,6 +136,11 @@ function exportConfig() {
     return text;
 }
 
+function capitalizeStr(str) {
+    if (!str) return str;
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 function main() {
     for (const property of PROPERTIES) {
         if (property.onCreate) {
@@ -143,11 +150,11 @@ function main() {
 
     const saveButton = document.querySelector('#saveButton');
     saveButton.addEventListener('click', () => {
-        // TODO: Abstract this in a way similar to properties
-        const rawVideoCheckbox = document.querySelector('#enableRawVideo');
-        settings.rawVideo = rawVideoCheckbox.checked;
-        const proModeCheckbox = document.querySelector('#enableProMode');
-        settings.proMode = proModeCheckbox.checked;
+        Object.keys(settings).forEach((settingName) => {
+            const checkboxId = `#enable${capitalizeStr(settingName)}`;
+            const checkbox = document.querySelector(checkboxId);
+            settings[settingName] = checkbox.checked;
+        });
 
         const content = exportConfig();
         const blob = new Blob([content], { type: 'text/plain'});

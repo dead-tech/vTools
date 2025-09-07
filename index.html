@@ -79,9 +79,9 @@
 
                 <div class="d-flex mb-2" data-bs-theme="dark" style="max-width: 600px; margin: auto;">
                     <label class="form-control col-auto d-flex align-items-center justify-content-between" for="groundLabelBorderPicker">
-                        Ground Label Border Colour
+                        Ground Label Border
                         <div class="w-25 row me-1">
-                            <input class="col ms-2" type="range" min="0" max="255" step="1" value="0" name="groundLabelBorderSlider" id="groundLabelBorderSlider">
+                            <input class="col ms-2" type="range" min="0" max="255" step="1" value="255" name="groundLabelBorderSlider" id="groundLabelBorderSlider">
                             <input class="form-control form-control-color ms-2" type="color" name="groundLabelBorderPicker" id="groundLabelBorderPicker">
                         </div>
                     </label>
@@ -89,21 +89,21 @@
 
                 <div class="d-flex mb-2" data-bs-theme="dark" style="max-width: 600px; margin: auto;">
                     <label class="form-control col-auto d-flex align-items-center justify-content-between" for="departureTextColor">
-                        Departure Label Text Colour
+                        Departure Label Text
                         <input class="form-control form-control-color ms-2" value="#48b8fb" type="color" name="departureTextColor" id="departureTextColor">
                     </label>
                 </div>
 
                 <div class="d-flex mb-2" data-bs-theme="dark" style="max-width: 600px; margin: auto;">
                     <label class="form-control col-auto d-flex align-items-center justify-content-between" for="arrivalTextColor">
-                        Arrival Label Text Colour
+                        Arrival Label Text
                         <input class="form-control form-control-color ms-2" value="#f4ca03" type="color" name="arrivalTextColor" id="arrivalTextColor">
                     </label>
                 </div>
 
                 <div class="d-flex mb-2" data-bs-theme="dark" style="max-width: 600px; margin: auto;">
                     <label class="form-control col-auto d-flex align-items-center justify-content-between" for="rawVideoColor">
-                        Raw Video Colour
+                        Raw Video
                         <input class="form-control form-control-color ms-2" value="#a1c04c" type="color" name="rawVideoColor" id="rawVideoColor">
                     </label>
                 </div>
@@ -121,6 +121,11 @@
                     <div class="col-auto">
                         <input type="checkbox" class="btn-check" id="enableProMode" autocomplete="off">
                         <label class="btn btn-outline-primary" for="enableProMode">Enable Pro Mode</label>
+                    </div>
+
+                    <div class="col-auto">
+                        <input type="checkbox" class="btn-check" id="enableTrackHeadingLine" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="enableTrackHeadingLine">Enable Track Heading Line</label>
                     </div>
                 </div>
             </div>
