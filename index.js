@@ -52,6 +52,10 @@ const PropertyType = Object.freeze({
     DepartureColor:  "Color_Departure",
     ArrivalColor:  "Color_Arrival",
     RawVideoColor:  "Color_RawVideo",
+    CautionColorBg: "Color_Caution",
+    CautionColorFg: "Color_CautionText",
+    WarningColorBg: "Color_Warning",
+    WarningColorFg: "Color_WarningText",
 });
 
 function spreadColorToString(hexColor) {
@@ -102,6 +106,34 @@ const PROPERTIES = [
     {
         type: PropertyType.RawVideoColor,
         picker: document.querySelector('#rawVideoColor'),
+        onSerialize: (type, picker) => serializeColor(type, picker),
+    },
+    {
+        type: PropertyType.cautionColorBg,
+        display: document.querySelector('#noTaxiClearance'),
+        picker: document.querySelector('#cautionColorBg'),
+        onCreate: (display, picker) => assignBackgroundColor(display, picker),
+        onSerialize: (type, picker) => serializeColor(type, picker),
+    },
+    {
+        type: PropertyType.cautionColorFg,
+        display: document.querySelector('#noTaxiClearance'),
+        picker: document.querySelector('#cautionColorFg'),
+        onCreate: (display, picker) => assignTextColor(display, picker),
+        onSerialize: (type, picker) => serializeColor(type, picker),
+    },
+    {
+        type: PropertyType.WarningColorBg,
+        display: document.querySelector('#noTakeOffClearance'),
+        picker: document.querySelector('#warningColorBg'),
+        onCreate: (display, picker) => assignBackgroundColor(display, picker),
+        onSerialize: (type, picker) => serializeColor(type, picker),
+    },
+    {
+        type: PropertyType.WarningColorFg,
+        display: document.querySelector('#noTakeOffClearance'),
+        picker: document.querySelector('#warningColorFg'),
+        onCreate: (display, picker) => assignTextColor(display, picker),
         onSerialize: (type, picker) => serializeColor(type, picker),
     },
 ];

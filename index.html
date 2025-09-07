@@ -13,6 +13,18 @@
             <h1>Ground Radar Plugin Settings Customizer</h1>
         </div>
 
+        <div class="row align-items-center justify-content-center">
+            <div id="noTaxiClearance" class="col text-left fs-1" style="max-width: 300px;">
+                NO TAXI CLR
+            </div>
+
+            <div style="width: 20px;"></div>
+
+            <div id="noTakeOffClearance" class="col text-left fs-1" style="max-width: 300px;">
+                NO TOF CLR
+            </div>
+        </div>
+
         <div id="label-container" class="row align-items-center justify-content-center">
             <div id="groundLabelFill" class="col ground-label">
                 <div id="departureLabel" class="fs-1">
@@ -50,13 +62,15 @@
                     </div>
                 </div>
             </div>
+        </div>
 
+        <div class="row">
             <div class="row d-flex justify-content-center">
-                <div class="col-auto mr-5" style="width: 325px;">
+                <div class="col-auto mr-5" style="width: 300px;">
                     <p>Departure</p>
                 </div>
 
-                <div class="col-auto ml-3" style="width: 320px;">
+                <div class="col-auto ml-3" style="width: 300px;">
                     <p>Arrival</p>
                 </div>
             </div>
@@ -105,6 +119,34 @@
                     <label class="form-control col-auto d-flex align-items-center justify-content-between" for="rawVideoColor">
                         Raw Video
                         <input class="form-control form-control-color ms-2" value="#a1c04c" type="color" name="rawVideoColor" id="rawVideoColor">
+                    </label>
+                </div>
+
+                <div class="d-flex mb-2" data-bs-theme="dark" style="max-width: 600px; margin: auto;">
+                    <label class="form-control col-auto d-flex align-items-center justify-content-between" for="cautionColorBg">
+                        Caution Background (e.g. no T/O clearance or squawk not set)
+                        <input class="form-control form-control-color ms-2" value="#e0e000" type="color" name="cautionColorBg" id="cautionColorBg">
+                    </label>
+                </div>
+
+                <div class="d-flex mb-2" data-bs-theme="dark" style="max-width: 600px; margin: auto;">
+                    <label class="form-control col-auto d-flex align-items-center justify-content-between" for="cautionColorFg">
+                        Caution Foreground (e.g. no T/O clearance)
+                        <input class="form-control form-control-color ms-2" value="#000000" type="color" name="cautionColorFg" id="cautionColorFg">
+                    </label>
+                </div>
+
+                <div class="d-flex mb-2" data-bs-theme="dark" style="max-width: 600px; margin: auto;">
+                    <label class="form-control col-auto d-flex align-items-center justify-content-between" for="warningColorBg">
+                        Warning Background (e.g. no T/O clearance or squawk not set)
+                        <input class="form-control form-control-color ms-2" value="#ff2800" type="color" name="warningColorBg" id="warningColorBg">
+                    </label>
+                </div>
+
+                <div class="d-flex mb-2" data-bs-theme="dark" style="max-width: 600px; margin: auto;">
+                    <label class="form-control col-auto d-flex align-items-center justify-content-between" for="warningColorFg">
+                        Warning Foreground (e.g. no T/O clearance)
+                        <input class="form-control form-control-color ms-2" value="#ffffff" type="color" name="warningColorFg" id="warningColorFg">
                     </label>
                 </div>
             </div>
