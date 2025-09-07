@@ -8,10 +8,11 @@
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
+    <div class="pt-2 text-center vertical-align" style="background-color: #363636;">
+        <h1 class="pb-2">Ground Radar Plugin Settings Customizer</h1>
+    </div>
+
     <div class="container mt-4">
-        <div class="mb-3 text-center">
-            <h1>Ground Radar Plugin Settings Customizer</h1>
-        </div>
 
         <div class="row align-items-center justify-content-center mt-4">
             <div id="noTaxiClearance" class="col text-left fs-1" style="max-width: 300px;">
@@ -129,28 +130,28 @@
 
                 <div class="d-flex mb-2" data-bs-theme="dark" style="max-width: 600px; margin: auto;">
                     <label class="form-control col-auto d-flex align-items-center justify-content-between" for="cautionColorBg">
-                        Caution Background (e.g. no T/O clearance or squawk not set)
+                        Caution Background
                         <input class="form-control form-control-color ms-2" value="#e0e000" type="color" name="cautionColorBg" id="cautionColorBg">
                     </label>
                 </div>
 
                 <div class="d-flex mb-2" data-bs-theme="dark" style="max-width: 600px; margin: auto;">
                     <label class="form-control col-auto d-flex align-items-center justify-content-between" for="cautionColorFg">
-                        Caution Foreground (e.g. no T/O clearance)
+                        Caution Foreground
                         <input class="form-control form-control-color ms-2" value="#000000" type="color" name="cautionColorFg" id="cautionColorFg">
                     </label>
                 </div>
 
                 <div class="d-flex mb-2" data-bs-theme="dark" style="max-width: 600px; margin: auto;">
                     <label class="form-control col-auto d-flex align-items-center justify-content-between" for="warningColorBg">
-                        Warning Background (e.g. no T/O clearance or squawk not set)
+                        Warning Background (also squawk not set)
                         <input class="form-control form-control-color ms-2" value="#ff2800" type="color" name="warningColorBg" id="warningColorBg">
                     </label>
                 </div>
 
                 <div class="d-flex mb-2" data-bs-theme="dark" style="max-width: 600px; margin: auto;">
                     <label class="form-control col-auto d-flex align-items-center justify-content-between" for="warningColorFg">
-                        Warning Foreground (e.g. no T/O clearance)
+                        Warning Foreground
                         <input class="form-control form-control-color ms-2" value="#ffffff" type="color" name="warningColorFg" id="warningColorFg">
                     </label>
                 </div>
@@ -184,6 +185,13 @@
             <button id="saveButton" type="button" class="btn btn-success">Download configuration file</button>
         </div>
     </div>
+
+    <footer class="text-center text-lg-start mt-4" style="background-color: #363636;">
+        <div class="text-center p-3" style="background-color: rgba(50, 50, 50, 0.05);">
+            © 2025 Copyright - 
+            <a class="color-primary" target="_blank" href="https://github.com/dead-tech">Luca Natilla</a>
+        </div>
+    </footer>
     
     <script src="index.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
