@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ground Radar Plugin for Euroscope Colours Customizer</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div id="label-container">
+        <div id="groundLabelFill">
+            <div id="departureLabel">
+                <div>
+                    <span>ITY455</span>
+                    <span>35</span>
+                    <span>M</span>
+                </div>
+                <div>
+                    <span>A20N</span>
+                    <span>005</span>
+                </div>
+                <div>
+                    <span>PUSH</span>
+                    <span>TEXT</span>
+                </div>
+            </div>
+        </div>
+        <div style="width: 20px;"></div>
+        <div id="groundLabelFill">
+            <div id="arrivalLabel">
+                <div>
+                    <span>ITY455</span>
+                    <span>STAND</span>
+                </div>
+                <div>
+                    <span>A20N</span>
+                    <span>35</span>
+                </div>
+                <div>
+                    <span>STS</span>
+                    <span>RMK</span>
+                </div>
+            </div>
+        </div>
+        <div style="width: 20px;"></div>
+        <div>
+            <p>Raw Video</p>
+            <div id="raw-video"></div>
+        </div>
+    </div>
+
+    <h1>Choose your colours</h1>
+
+    <div>
+        <input type="color" value="#323232" name="groundLabelFillPicker" id="groundLabelFillPicker">
+        <label for="groundLabelFillPicker">Ground Label Background Colour</label>
+        <input type="range" min="0" max="255" step="1" value="200" name="groundLabelFillSlider" id="groundLabelFillSlider">
+        <label for="groundLabelFillSlider">Ground Label Background Transparency</label>
+    </div>
+
+    <div>
+        <input type="color" name="groundLabelBorderPicker" id="groundLabelBorderPicker">
+        <label for="groundLabelBorder">Ground Label Border Colour</label>
+        <input type="range" min="0" max="255" step="1" value="0" name="groundLabelBorderSlider" id="groundLabelBorderSlider">
+        <label for="groundLabelBorderSlider">Ground Label Background Transparency</label>
+    </div>
+
+    <div>
+        <input type="color" value="#48b8fb" name="departureTextColor" id="departureTextColor">
+        <label for="departureTextColor">Departure Label Text Colour</label>
+    </div>
+    <div>
+        <input type="color" value="#f4ca03" name="arrivalTextColor" id="arrivalTextColor">
+        <label for="arrivalTextColour">Arrival Label Text Colour</label>
+    </div>
+
+    <div>
+
+    </div>
+        <input type="color" value="#a1c04c" name="rawVideoColor" id="rawVideoColor">
+        <label for="rawVideoColor">Raw Video Colour</label>
+    <hr>
+
+    <div>
+        <button id="saveButton">Save</button>
+        <br>
+        <textarea name="outputConfig" id="outputConfig"></textarea>
+        <br>
+        <button id="copyButton">Copy</button>
+    </div>
+    
+    <script src="index.js"></script>
+</body>
+</html>
