@@ -11,50 +11,63 @@ function hexToRgb(hex){
     throw new Error('Bad Hex');
 }
 
-function assignBackgroundColor(display, picker, slider) {
+function spreadColorToString(hexColor) {
+    const color = hexToRgb(hexColor);
+    return `${color.r},${color.g},${color.b}`;
+}
+
+function capitalizeStr(str) {
+    if (!str) return str;
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+const StyleProperty = Object.freeze({
+    BackgroundColor: "background-color",
+    TextColor: "color",
+    SvgFill: "fill",
+    Border: "border",
+});
+
+function assignStyleProperty(display, picker, styleProperty, slider) {
     const updater = () => {
-        display.style.backgroundColor = picker.value;
-        if (slider) {
-            display.style.backgroundColor = `rgba(${spreadColorToString(picker.value)}, ${slider.value / 255})`
+        const color = picker.value;
+        switch (styleProperty) {
+            case StyleProperty.BackgroundColor: {
+                display.style.backgroundColor = slider
+                    ? `rgba(${spreadColorToString(color)}, ${slider.value / 255})`
+                    : color;
+                break;
+            }
+            case StyleProperty.TextColor: {
+                display.style.color = color;
+                break;
+            }
+            case StyleProperty.SvgFill: {
+                display.style.fill = color;
+                break;
+            }
+            case StyleProperty.Border: {
+                const borderColorRgb = hexToRgb(color);
+                display.style.border = `4px solid rgba(${borderColorRgb.r}, ${borderColorRgb.g}, ${borderColorRgb.b}, ${slider.value / 255}`;
+                break;
+            }
+            default: {
+                console.warn(`Unhandled stlye property: ${styleProperty}`);
+                break;
+            }
         }
     };
 
     updater();
-
     picker.addEventListener('input', updater);
     if (slider) {
         slider.addEventListener('input', updater);
     }
 }
 
-function assignTextColor(display, picker) {
-    const updater = () => display.style.color = picker.value;
-    updater();
-    picker.addEventListener('input', updater);
-}
-
-function assignSvgFillColor(display, picker) {
-    const updater = () => display.style.fill = picker.value;
-    updater();
-    picker.addEventListener('input', updater);
-}
-
-function assignBorderColor(display, picker, slider) {
-    const updateBorder = () => {
-        const borderColorRgb = hexToRgb(picker.value);
-        display.style.border =
-            `4px solid rgba(${borderColorRgb.r}, ${borderColorRgb.g}, ${borderColorRgb.b}, ${slider.value})`;
-    };
-
-    updateBorder();
-
-    picker.addEventListener('input', updateBorder);
-    slider.addEventListener('input', updateBorder);
-}
-
 const PropertyType = Object.freeze({
-    GroundLabelBackgroundColor: { colorKey: "Color_SelectedLabelFill_Gnd", opacityKey: "GroundLabel_Transparency_Bg" },
-    GroundLabelBorderColor: { colorKey: "Color_SelectedLabelBorder_Gnd", opacityKey: "GroundLabel_Transparency_Bd"},
+    GroundLabelBackgroundColor: { color: "Color_SelectedLabelFill_Gnd", opacity: "GroundLabel_Transparency_Bg" },
+    GroundLabelBorderColor: { color: "Color_SelectedLabelBorder_Gnd", opacity: "GroundLabel_Transparency_Bd"},
     DepartureColor:  "Color_Departure",
     ArrivalColor:  "Color_Arrival",
     RawVideoColor:  "Color_RawVideo",
@@ -64,18 +77,12 @@ const PropertyType = Object.freeze({
     WarningColorFg: "Color_WarningText",
 });
 
-function spreadColorToString(hexColor) {
-    const color = hexToRgb(hexColor);
-    return `${color.r}, ${color.g}, ${color.b}`;
-}
-
-function serializeColor(key, picker) {
+function serializeColor(key, picker, slider) {
+    if (slider) {
+        return `${key.color}=${spreadColorToString(picker.value)}\n`
+            + `${key.opacity}=${slider.value}\n`;
+    }
     return `${key}=${spreadColorToString(picker.value)}\n`;
-}
-
-function serializeColorWithOpacity(key, picker, slider) {
-    const { colorKey, opacityKey } = key;
-    return serializeColor(colorKey, picker) + `${opacityKey}=${slider.value}\n`;
 }
 
 const PROPERTIES = [
@@ -84,64 +91,64 @@ const PROPERTIES = [
         display: document.querySelectorAll('#groundLabelFill'),
         picker: document.querySelector('#groundLabelFillPicker'),
         slider: document.querySelector('#groundLabelFillSlider'),
-        onCreate: (displays, picker, slider) => displays.forEach((display) => assignBackgroundColor(display, picker, slider)),
-        onSerialize: (type, picker, slider) => serializeColorWithOpacity(type, picker, slider),
+        onCreate: (displays, picker, slider) => displays.forEach((display) => assignStyleProperty(display, picker, StyleProperty.BackgroundColor, slider)),
+        onSerialize: (type, picker, slider) => serializeColor(type, picker, slider),
     },
     {
         type: PropertyType.GroundLabelBorderColor,
         display: document.querySelectorAll('#groundLabelFill'),
         picker: document.querySelector('#groundLabelBorderPicker'),
         slider: document.querySelector('#groundLabelBorderSlider'),
-        onCreate: (displays, picker, slider) => displays.forEach((display) => assignBorderColor(display, picker, slider)),
-        onSerialize: (type, picker, slider) => serializeColorWithOpacity(type, picker, slider),
+        onCreate: (displays, picker, slider) => displays.forEach((display) => assignStyleProperty(display, picker, StyleProperty.Border, slider)),
+        onSerialize: (type, picker, slider) => serializeColor(type, picker, slider),
     },
     {
         type: PropertyType.DepartureColor,
         display: document.querySelector('#departureLabel'),
         picker: document.querySelector('#departureTextColor'),
-        onCreate: (display, picker) => assignTextColor(display, picker),
+        onCreate: (display, picker) => assignStyleProperty(display, picker, StyleProperty.TextColor),
         onSerialize: (type, picker) => serializeColor(type, picker),
     },
     {
         type: PropertyType.ArrivalColor,
         display: document.querySelector('#arrivalLabel'),
         picker: document.querySelector('#arrivalTextColor'),
-        onCreate: (display, picker) => assignTextColor(display, picker),
+        onCreate: (display, picker) => assignStyleProperty(display, picker, StyleProperty.TextColor),
         onSerialize: (type, picker) => serializeColor(type, picker),
     },
     {
         type: PropertyType.RawVideoColor,
         display: document.querySelector('#rawVideo'),
         picker: document.querySelector('#rawVideoColor'),
-        onCreate: (display, picker) => assignSvgFillColor(display, picker),
+        onCreate: (display, picker) => assignStyleProperty(display, picker, StyleProperty.SvgFill),
         onSerialize: (type, picker) => serializeColor(type, picker),
     },
     {
-        type: PropertyType.cautionColorBg,
+        type: PropertyType.CautionColorBg,
         display: document.querySelector('#noTaxiClearance'),
         picker: document.querySelector('#cautionColorBg'),
-        onCreate: (display, picker) => assignBackgroundColor(display, picker),
+        onCreate: (display, picker) => assignStyleProperty(display, picker, StyleProperty.BackgroundColor),
         onSerialize: (type, picker) => serializeColor(type, picker),
     },
     {
-        type: PropertyType.cautionColorFg,
+        type: PropertyType.CautionColorFg,
         display: document.querySelector('#noTaxiClearance'),
         picker: document.querySelector('#cautionColorFg'),
-        onCreate: (display, picker) => assignTextColor(display, picker),
+        onCreate: (display, picker) => assignStyleProperty(display, picker, StyleProperty.TextColor),
         onSerialize: (type, picker) => serializeColor(type, picker),
     },
     {
         type: PropertyType.WarningColorBg,
         display: document.querySelector('#noTakeOffClearance'),
         picker: document.querySelector('#warningColorBg'),
-        onCreate: (display, picker) => assignBackgroundColor(display, picker),
+        onCreate: (display, picker) => assignStyleProperty(display, picker, StyleProperty.BackgroundColor),
         onSerialize: (type, picker) => serializeColor(type, picker),
     },
     {
         type: PropertyType.WarningColorFg,
         display: document.querySelector('#noTakeOffClearance'),
         picker: document.querySelector('#warningColorFg'),
-        onCreate: (display, picker) => assignTextColor(display, picker),
+        onCreate: (display, picker) => assignStyleProperty(display, picker, StyleProperty.TextColor),
         onSerialize: (type, picker) => serializeColor(type, picker),
     },
 ];
@@ -158,27 +165,35 @@ let settings = {
     trackHeadingLine: false,
 };
 
-function getEnumKeyFromValue(enumObject, value) {
-    return Object.keys(enumObject).find(key => enumObject[key] === value);
-}
 
 function exportConfig() {
-    let text = "";
+    const propertiesConfig = PROPERTIES
+        .map(({type: type, picker: picker, slider: slider, onSerialize: serialize }) => serialize(type, picker, slider))
+        .join('');
 
-    for (const property of PROPERTIES) {
-        text += property.onSerialize(property.type, property.picker, property.slider);
-    }
+    const settingsConfig = Object.keys(SettingsType)
+        .map(key => `${SettingsType[key]}=${settings[key] ? 1 : 0}`).join('\n');
 
-    Object.keys(SettingsType).forEach((key) => {
-        text += `${SettingsType[key]}=${settings[key] ? 1 : 0}\n`;
-    })
-
-    return text;
+    return propertiesConfig + settingsConfig;
 }
 
-function capitalizeStr(str) {
-    if (!str) return str;
-    return str.charAt(0).toUpperCase() + str.slice(1);
+function updateSettings() {
+    Object.keys(settings).forEach((settingName) => {
+        const checkboxId = `#enable${capitalizeStr(settingName)}`;
+        const checkbox = document.querySelector(checkboxId);
+        settings[settingName] = checkbox.checked;
+    });
+}
+
+function downloadConfigFile() {
+    const content = exportConfig();
+    const blob = new Blob([content], { type: 'text/plain'});
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'GRPluginSettingsLocal.txt';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 function main() {
@@ -190,22 +205,9 @@ function main() {
 
     const saveButton = document.querySelector('#saveButton');
     saveButton.addEventListener('click', () => {
-        Object.keys(settings).forEach((settingName) => {
-            const checkboxId = `#enable${capitalizeStr(settingName)}`;
-            const checkbox = document.querySelector(checkboxId);
-            settings[settingName] = checkbox.checked;
-        });
-
-        const content = exportConfig();
-        const blob = new Blob([content], { type: 'text/plain'});
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'GRPluginSettingsLocal.txt';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        updateSettings();
+        downloadConfigFile();
     });
 }
-
 
 window.onload = main;
